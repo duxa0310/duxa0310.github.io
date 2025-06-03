@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AB7 WebGL Mandelbrot</title>
+
+    <link rel = "icon" type = "image/x-icon" href = "images/favicon.ico">
+
+    <script type = "text/javascript">
+      /* WebGL context */
+      let gl;
+
+      /* Pause flag */
+      let IsPause;
+
+      /* Uniform parameters */
+      let startTime, zoom, x0, y0, frameW, frameH;
+      let color1, color2, iterations;
+
+      /***
+       * RESOURCES HANDLE
+       ***/
+
+      /* Fragment shader source */
+      const shaderFs = 
+       `#version 300 es
+        precision highp float;
+        layout (location = 0) out vec4 OutColor;
+
+        uniform float u_time;
+        uniform float u_cam_x0;
+        uniform float u_cam_y0;
+        uniform float u_zoom;
+
+        uniform float u_frameW;
+        uniform float u_frameH;
+
+        uniform vec3 u_color1;
+        uniform vec3 u_color2;
+
+        uniform int u_iterations;
+
+        float Julia( vec2 Z, vec2 C )
+        {
+          int n = 0;
+
+          while (Z.x * Z.x + Z.y * Z.y < 4.0 && n < u_iterations)
+          {
+            Z = C + vec2(Z.x * Z.x - Z.y * Z.y, 2.0 * Z.x * Z.y);
+            n++;
+          }
+          return float(n);
+        }
+
+        void main()
+        {
+          float x = gl_FragCoord.x, y = gl_FragCoord.y;
+          float time = 125.0 * sin(2.0 * 3.14 * u_time / 1000.0);
+
+          float newX = 2.0 * (u_cam_x0 + u_frameW / (2.0 * u_zoom) * (2.0 * x / u_frameW - 1.0)) / u_frameW - 1.0;
+          float newY = 2.0 * (u_cam_y0 + u_frameH / (2.0 * u_zoom) * (2.0 * y / u_frameH - 1.0)) / u_frameH - 1.0;
+
+          vec2 Z = vec2(newX, newY);   
+          vec2 C = vec2(0.35 + 0.02 * sin(time * 0.001), 0.39 + 0.02 * sin(time * 0.001));
+
+          float n = Julia(Z, C) / float(u_iterations) * 4.0;
+
+          OutColor = vec4(u_color2 + (u_color1 - u_color2) * n, 1.0);
+        }`;
+
+      /* Vertex shader source */
+      const shaderVs = 
+       `#version 300 es
+        precision highp float;
+
+        layout (location = 0) in vec2 InPosition;
+
+        void main() 
+        {
+          gl_Position = vec4(InPosition, 0, 1);
+        }`;
+
+      /* Create shader from source function.
+       * ARGUMENTS:
+       *   - shader string source:
+       *       shaderStr;
+       *   - webGL shader type:
+       *       type;
+       * RETURNS:
+       *   shader object.
+       */
+      function getShader(shaderStr, type) 
+      {
+        const shader = gl.createShader(type);
+
+        gl.shaderSource(shader, shaderStr);
+        gl.compileShader(shader);
+
+        if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) 
+        {
+          alert(gl.getShaderInfoLog(shader));
+        }
+
+        return shader;
+      } /* End of 'getShader' function */
+
+      /***
+       * INITIALIZATION
+       ***/
+
+      /* Initialize WebGL context function.
+       * ARGUMENTS:
+       *   - html render canvas:
+       *       canvas;
+       * RETURNS: None.
+       */
+      function initGL(canvas) 
+      {
+        gl = canvas.getContext("webgl2");
+        gl.viewportWidth = canvas.width;
+        gl.viewportHeight = canvas.height;
+      } /* End of 'initGL' function */
+      
+      /* GL uniform locations */
+      let u_time_location, u_cam_x0_location, u_cam_y0_location, 
+        u_zoom_location, u_frameW_location, u_frameH_location, u_mX_location, u_mY_location,
+        u_color1_location, u_color2_location, u_iterations_location;
+
+      /* Initialize all shaders function.
+       * ARGUMENTS: None.
+       * RETURNS: None.
+       */
+      function initShaders() 
+      {
+        const vs = getShader(shaderFs, gl.FRAGMENT_SHADER);
+        const fs = getShader(shaderVs, gl.VERTEX_SHADER);
+
+        const program = gl.createProgram();
+        gl.attachShader(program, vs);
+        gl.attachShader(program, fs);
+        gl.linkProgram(program);
+
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) {
+          alert("Program linkage error");
+        }
+
+        gl.useProgram(program);
+
+        u_time_location = gl.getUniformLocation(program, "u_time");
+        u_cam_x0_location = gl.getUniformLocation(program, "u_cam_x0");
+        u_cam_y0_location = gl.getUniformLocation(program, "u_cam_y0");
+        u_frameW_location = gl.getUniformLocation(program, "u_frameW");
+        u_frameH_location = gl.getUniformLocation(program, "u_frameH");
+        u_color1_location = gl.getUniformLocation(program, "u_color1");
+        u_color2_location = gl.getUniformLocation(program, "u_color2");
+        u_zoom_location = gl.getUniformLocation(program, "u_zoom");
+        u_iterations_location = gl.getUniformLocation(program, "u_iterations");
+      } /* End of 'initShaders' function */
+
+      /* Vertex buffer object */
+      let vertexBuffer;
+
+      /* Initialize vertex buffer function.
+       * ARGUMENTS: None.
+       * RETURNS: None.
+       */
+      function initBuffer() 
+      {
+        vertexBuffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, vertexBuffer);
+        vertices = 
+        [
+          -1, -1,
+          3, -1,
+          -1, 3
+        ];
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+      } /* End of 'initBuffer' function */
+
+      /* Mouse save parameters */
+      let mousePressed = false; 
+      let lastX = -1, lastY = -1;
+
+      /* On page load called function.
+       * ARGUMENTS: None.
+       * RETURNS: None.
+       */
+      function onStart() 
+      {
+        console.log("Initialization starting...");
+
+        let canvas = document.getElementById("webgl-canvas");
+
+        canvas.onmousedown = (ev) => { mousePressed = true; }
+        canvas.onmouseup = (ev) => { mousePressed = false; }
+        canvas.onmousemove = (ev) =>
+        {
+          if (lastX == -1 || lastY == -1)
+          {
+            lastX = ev.x;
+            lastY = ev.y;
+          }
+          if (mousePressed)
+          {
+            /* Drag cursor to move camera */
+            x0 -= (ev.x - lastX) / zoom;
+            y0 += (ev.y - lastY) / zoom;
+          }
+          lastX = ev.x;
+          lastY = ev.y;
+        }
+        canvas.onwheel = (ev) => 
+        { 
+          zoom *= 1 - ev.deltaY / 1000; 
+          /* Map-like zooming */
+          x0 -= (lastX / zoom - frameW / (2 * zoom)) * ev.deltaY / 1000;
+          y0 += (lastY / zoom - frameH / (2 * zoom)) * ev.deltaY / 1000;
+        }
+        canvas.onresize = (ev) => 
+        {
+          frameW = ev.width;
+          frameH = ev.height;
+        }
+
+        /* Initialize system */
+        initGL(canvas);
+        initShaders();
+        initBuffer();
+
+        startTime = (new Date()).getMilliseconds();
+        frameW = canvas.width;
+        frameH = canvas.height;
+        x0 = frameW / 2;
+        y0 = frameH / 2;
+        zoom = 0.8;
+        IsPause = false;
+        color1 = document.getElementById("picker1").value;
+        color2 = document.getElementById("picker2").value;
+        iterations = document.getElementById("slider").value;
+        document.getElementById("picker1").onchange = function()
+        {
+          color1 = this.value; 
+        };
+        document.getElementById("picker2").onchange = function()
+        {
+          color2 = this.value;
+        };
+        document.getElementById("slider").onchange = function()
+        {
+          iterations = this.value;
+        }
+        drawScene();
+      } /* End of 'onStart' function */
+
+      /***
+       * RENDERING
+       ***/
+
+      function hexStringToVec3(str)
+      {
+        let n1 = parseInt(str.substring(1, 3), 16) / 255;
+        let n2 = parseInt(str.substring(3, 5), 16) / 255;
+        let n3 = parseInt(str.substring(5, 7), 16) / 255;
+        return [n1, n2, n3]
+      }
+
+      /* Scene rendering function.
+       * ARGUMENTS: None.
+       * RETURNS: None.
+       */
+      function drawScene() 
+      {
+        gl.clearColor(0, 1, 0, 1);
+        gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
+        gl.clear(gl.COLOR_BUFFER_BIT);
+
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+
+        timeFromStart = (new Date()).getMilliseconds() - startTime;
+        if (!IsPause)
+        {
+          gl.uniform1f(u_time_location, timeFromStart);
+        }
+        gl.uniform1f(u_cam_x0_location, x0);
+        gl.uniform1f(u_cam_y0_location, y0);
+        gl.uniform1f(u_zoom_location, zoom);
+        gl.uniform1f(u_frameW_location, frameW);
+        gl.uniform1f(u_frameH_location, frameH);
+        gl.uniform1f(u_mX_location, lastX);
+        gl.uniform1f(u_mY_location, lastY);
+        gl.uniform3fv(u_color1_location, hexStringToVec3(color1));
+        gl.uniform3fv(u_color2_location, hexStringToVec3(color2));
+        gl.uniform1i(u_iterations_location, iterations);
+
+        gl.drawArrays(gl.TRIANGLES, 0, 3);
+        window.requestAnimationFrame(drawScene);
+      } /* End of 'drawScene' function */
+
+    </script>
+  </head>
+  <body onload = "onStart();">
+    <div style = "display: flex;">
+      <div style = "flex: 50%;">
+        <canvas
+        id = "webgl-canvas"
+        style = "border: none"
+        width = 900
+        height = 900
+        ></canvas>
+      </div>
+      <div style = "flex: 50%;">
+        <br><br><br>
+        <p1 style = "font-size: xx-large;">AB7 WebGL Mandelbrot Viewer</p1>
+        <br><br><br>
+        <button style = "width: 160px; height: 60px; font-size: larger;" onclick="IsPause = !IsPause;">Pause / Resume</button>
+        <div>
+          <br>
+          <p1 style = "font-size: x-large; margin-right: 8px;">Inner color</p1>
+          <input id = "picker1" type = "color" value = "#4d77cc" style = "width: 80px; height: 30px;"/>
+          <br><br>
+          <p1 style = "font-size: x-large; margin-right: 8px;">Outer color</p1>
+          <input id = "picker2" type = "color" value = "#000000" style = "width: 80px; height: 30px; "/>
+        </div>
+        <br>
+        <span>
+        <p1 style = "font-size: x-large; margin-right: 8px;">Iterations</p1>
+        <p1>1</p1>
+        <input
+          id = "slider"
+          type = "range"
+          min = 1
+          max = 1000
+          value = 500
+          step = 1
+          style = "width: 200px;"/>
+        <p1>1000</p1>
+        </span>    
+      </div>
+    </div>
+  </body>
+</html>
