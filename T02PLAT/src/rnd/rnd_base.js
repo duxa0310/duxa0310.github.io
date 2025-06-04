@@ -30,11 +30,11 @@ export function AB7_RndInit()
   gl.projDist = gl.projSize;
   gl.farClip = 1847;
 
-  gl.loc = [0, 5, 0];
-  gl.at = [0, 0, 0];
-  gl.up = [0, 1, 0];
+  gl.camLoc = mth.Vec3Set1(4.7);
+  gl.camAt = mth.Vec3Set1(0);
+  gl.camUp = mth.Vec3Set(0, 1, 0);
 
-  gl.matrView = mth.MatrView(gl.loc, gl.at, gl.up);
+  gl.matrView = mth.MatrView(gl.camLoc, gl.camAt, gl.camUp);
 
   AB7_RndResize();
   outSys("Render system initialized");

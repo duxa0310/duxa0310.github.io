@@ -16,7 +16,7 @@ function AB7_RndShdLoadTextFromFile(filePath)
 
             void main( void ) 
             {
-              gl_Position = /* MatrWVP * */ vec4(InPosition, 1);
+              gl_Position = MatrWVP *  vec4(InPosition, 1);
 
               DrawPos = (/* MatrW * */ vec4(InPosition, 1)).xyz;
               DrawTexCoord = InTexCoord;

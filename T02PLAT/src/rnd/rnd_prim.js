@@ -77,7 +77,7 @@ class Primitive
 
   draw(worldMatrix)
   {
-    let shd = AB7_RndShdGetDef()
+    let shd = AB7_RndShdGetDef();
     gl.useProgram(shd.program);
     console.log("View matrix: ");
     console.log(gl.matrView);
@@ -85,7 +85,7 @@ class Primitive
     console.log(gl.matrProj);
     console.log("WVP matrix: ");
     console.log(gl.matrVP);
-    gl.uniformMatrix4fv(gl.getUniformLocation(shd.program, "MatrWVP"), false, 
+    gl.uniformMatrix4fv(gl.getUniformLocation(shd.program, "MatrWVP"), true, 
       new Float32Array(gl.matrVP[0].concat(gl.matrVP[1]).concat(gl.matrVP[2]).concat(gl.matrVP[3])));
     gl.bindVertexArray(this.vA);
     if (this.iBuf == undefined)

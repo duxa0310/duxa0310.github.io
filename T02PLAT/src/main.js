@@ -23,9 +23,9 @@ function AB7_SystemInit()
   AB7_ResInit();
   AB7_RndPrimInit();
   prim = AB7_RndPrimCreate(gl.TRIANGLES,
-            [0, 0, 0,      0, 0,  0, 0, 0,  0.96, 0.95, 0.41, 1]
-    .concat([0.5, 0.5, 0,  0, 0,  0, 0, 0,  0.36, 0.70, 0.44, 1])
-    .concat([0, 0.5, 0,    0, 0,  0, 0, 0,  0.78, 0.98, 0.84, 1]), 
+            [-1, 0, 0,  0, 0,  0, 0, 0,  0.96, 0.95, 0.41, 1]
+    .concat([0, 1, 0,  0, 0,  0, 0, 0,  0.36, 0.70, 0.44, 1])
+    .concat([0, 0, -1,  0, 0,  0, 0, 0,  0.78, 0.98, 0.84, 1]), 
   []);
   window.requestAnimationFrame(AB7_SystemMainLoop);
 }
