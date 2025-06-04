@@ -1,5 +1,44 @@
-async function AB7_RndShdLoadTextFromFile(filePath)
+function AB7_RndShdLoadTextFromFile(filePath)
 {
+  if (filePath == "bin/shaders/default/vert.glsl")
+  {   
+    return `layout(location = 0) in vec3 InPosition;
+            layout(location = 1) in vec2 InTexCoord;
+            layout(location = 2) in vec3 InNormal;
+            layout(location = 3) in vec4 InColor;
+
+            out vec3 DrawPos;
+            out vec2 DrawTexCoord;
+            out vec3 DrawNormal;
+            out vec4 DrawColor;
+
+            uniform mat4 MatrWVP;
+
+            void main( void ) 
+            {
+              gl_Position = /* MatrWVP * */ vec4(InPosition, 1);
+
+              DrawPos = (/* MatrW * */ vec4(InPosition, 1)).xyz;
+              DrawTexCoord = InTexCoord;
+              DrawNormal = /* mat3(MatrWInv) * */ InNormal;
+              DrawColor = vec4(InColor);
+            }`;
+  }
+  else if (filePath == "bin/shaders/default/frag.glsl")
+  {
+    return `layout(location = 0) out vec4 OutColor;
+
+            in vec3 DrawPos;
+            in vec2 DrawTexCoord;
+            in vec3 DrawNormal;
+            in vec4 DrawColor;
+
+            void main()
+            {
+              OutColor = DrawColor;
+            }`;
+  }
+  /*
   const response = await fetch(filePath);
     
   if (!(response).ok)
@@ -10,11 +49,12 @@ async function AB7_RndShdLoadTextFromFile(filePath)
   let sourceText = await response.text().then((text) => text);
 
   return sourceText;
+  */
 }
 
-async function AB7_RndShdCreate(shdFileNamePrefix)
+function AB7_RndShdCreate(shdFileNamePrefix)
 {
-  const program = gl.createProgram();
+  let program = gl.createProgram();
   const shdTypes =
   [
     ["vert", gl.VERTEX_SHADER, "#version 300 es\nprecision highp float;\n#define VERTEX_SHADER 1\n"],
@@ -24,7 +64,7 @@ async function AB7_RndShdCreate(shdFileNamePrefix)
   for (let i = 0; i < shdTypes.length; i++)
   {
     let shdPath = "bin/shaders/" + shdFileNamePrefix + "/" + shdTypes[i][0] + ".glsl";
-    let shdString = await AB7_RndShdLoadTextFromFile(shdPath);
+    let shdString = AB7_RndShdLoadTextFromFile(shdPath);
     shdString = shdTypes[i][2] + shdString;
 
     const shader = gl.createShader(shdTypes[i][1]);
@@ -50,7 +90,7 @@ async function AB7_RndShdCreate(shdFileNamePrefix)
   {
     outText("Created shader pack: " + shdFileNamePrefix);
   }
-  return await program;
+  return program;
 }
 
 let AB7_RndShaders = [];
@@ -67,7 +107,7 @@ class Shader
   constructor(shdFileNamePrefix) 
   {
     this.name = shdFileNamePrefix;
-    this.program = AB7_RndShdCreate(shdFileNamePrefix).value;
+    this.program = AB7_RndShdCreate(shdFileNamePrefix);
     AB7_RndShaders.push(this);
   }
 

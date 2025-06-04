@@ -51,7 +51,7 @@ class Primitive
       gl.vertexAttribPointer(0, 3, gl.FLOAT, false, vertexSizeBytes, 0);  /* p */
       gl.vertexAttribPointer(1, 2, gl.FLOAT, false, vertexSizeBytes, 12); /* t */
       gl.vertexAttribPointer(2, 3, gl.FLOAT, false, vertexSizeBytes, 20); /* n */
-      gl.vertexAttribPointer(3, 4, gl.FLOAT, false, vertexSizeBytes, 28); /* c */
+      gl.vertexAttribPointer(3, 4, gl.FLOAT, false, vertexSizeBytes, 32); /* c */
     }
     /* Indices data */
     if (indices.length > 0)
@@ -77,7 +77,16 @@ class Primitive
 
   draw(worldMatrix)
   {
-    gl.useProgram(AB7_RndShdGetDef().program);
+    let shd = AB7_RndShdGetDef()
+    gl.useProgram(shd.program);
+    console.log("View matrix: ");
+    console.log(gl.matrView);
+    console.log("Projection matrix: ");
+    console.log(gl.matrProj);
+    console.log("WVP matrix: ");
+    console.log(gl.matrVP);
+    gl.uniformMatrix4fv(gl.getUniformLocation(shd.program, "MatrWVP"), false, 
+      new Float32Array(gl.matrVP[0].concat(gl.matrVP[1]).concat(gl.matrVP[2]).concat(gl.matrVP[3])));
     gl.bindVertexArray(this.vA);
     if (this.iBuf == undefined)
     {
