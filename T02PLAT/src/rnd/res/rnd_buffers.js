@@ -1,4 +1,3 @@
-export function AB7_BufInit()
-{
+export function ab7BufInit() {
   outSys("Buffers initialized");
 }

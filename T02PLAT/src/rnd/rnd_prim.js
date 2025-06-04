@@ -1,6 +1,9 @@
-import { AB7_RndShdGetDef } from "./res/rnd_shaders.js";
+import { ab7RndShdGetDef } from "./res/rnd_shaders.js";
+import * as mth from "../math/math.js"
 
-let AB7_RndPrimitives = [];
+export function ab7RndCreateVertex(p, t, n, c) {
+  return p.concat(t, n, c);
+}
 
 /* vec3 Pos;
  * vec2 TexCoord;
@@ -9,13 +12,11 @@ let AB7_RndPrimitives = [];
  */
 const vertexSizeBytes = 48;
 
-export function AB7_RndPrimCreate(type, vertices, indices)
-{
+export function ab7RndPrimCreate(type, vertices, indices) {
   return new Primitive(type, vertices, indices);
-} 
+}
 
-class Primitive
-{
+class Primitive {
   /* ATTRIBUTES:
    *   - primitive type:
    *       let type;
@@ -29,12 +30,10 @@ class Primitive
    *       len numOfElements;
    */
 
-  constructor(type, vertices, indices) 
-  {
+  constructor(type, vertices, indices) {
     this.type = type;
     /* Vertices data */
-    if (vertices.length > 0)
-    {
+    if (vertices.length > 0) {
       this.vBuf = gl.createBuffer();
       this.vA = gl.createVertexArray();
 
@@ -54,53 +53,41 @@ class Primitive
       gl.vertexAttribPointer(3, 4, gl.FLOAT, false, vertexSizeBytes, 32); /* c */
     }
     /* Indices data */
-    if (indices.length > 0)
-    {
+    if (indices.length > 0) {
       this.iBuf = gl.createBuffer();
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.iBuf);
       gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Int32Array(indices), gl.STATIC_DRAW);
       this.numOfElements = indices.length;
     }
-    else
-    {
+    else {
       this.numOfElements = vertices.length;
     }
     outText("Created primitive: " + new String(4 * vertices.length / vertexSizeBytes) + " vertices, " + new String(indices.length) + " indices");
   }
 
-  free() 
-  {
-    gl.bindVertexArray(this.vA);
-    gl.deleteBuffer(this.vBuf);
-    gl.deleteVertexArray(this.vA);
-  }
-
-  draw(worldMatrix)
-  {
-    let shd = AB7_RndShdGetDef();
+  draw(worldmatrix) {
+    let shd = ab7RndShdGetDef();
     gl.useProgram(shd.program);
-    console.log("View matrix: ");
-    console.log(gl.matrView);
-    console.log("Projection matrix: ");
-    console.log(gl.matrProj);
-    console.log("WVP matrix: ");
-    console.log(gl.matrVP);
-    gl.uniformMatrix4fv(gl.getUniformLocation(shd.program, "MatrWVP"), true, 
-      new Float32Array(gl.matrVP[0].concat(gl.matrVP[1]).concat(gl.matrVP[2]).concat(gl.matrVP[3])));
+
+    gl.uniformMatrix4fv(gl.getUniformLocation(shd.program, "matrW"), true,
+      new Float32Array(worldmatrix[0].concat(worldmatrix[1]).concat(worldmatrix[2]).concat(worldmatrix[3])));
+
+    gl.matrWVP = mth.matrMulMatr(worldmatrix, gl.matrVP);
+    gl.uniformMatrix4fv(gl.getUniformLocation(shd.program, "matrWVP"), true,
+      new Float32Array(gl.matrWVP[0].concat(gl.matrWVP[1]).concat(gl.matrWVP[2]).concat(gl.matrWVP[3])));
+
     gl.bindVertexArray(this.vA);
-    if (this.iBuf == undefined)
-    {
+
+    if (this.iBuf == undefined) {
       gl.drawArrays(this.type, 0, this.numOfElements);
     }
-    else
-    {
+    else {
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.iBuf);
       gl.drawElements(this.type, this.numOfElements, gl.UNSIGNED_BYTE, 0);
     }
   }
 }
 
-export function AB7_RndPrimInit()
-{
+export function ab7RndPrimInit() {
   outSys("Primitives initialized");
 }

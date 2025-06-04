@@ -1,8 +1,7 @@
-import {AB7_RndShdInit} from "./rnd_shaders.js"
-import {AB7_BufInit} from "./rnd_buffers.js"
+import { ab7RndShdInit } from "./rnd_shaders.js"
+import { ab7BufInit } from "./rnd_buffers.js"
 
-export function AB7_ResInit()
-{
-  AB7_RndShdInit();
-  AB7_BufInit();
+export function ab7ResInit() {
+  ab7RndShdInit();
+  ab7BufInit();
 }
