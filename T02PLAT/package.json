@@ -1,6 +1,11 @@
 {
   "dependencies": {
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
+    "@rollup/plugin-terser": "^0.4.4",
     "http-server": "^14.1.1",
-    "https-server": "^0.1.2"
+    "https-server": "^0.1.2",
+    "rollup": "^4.41.1",
+    "tweakpane": "^4.0.5"
   }
 }
