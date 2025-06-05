@@ -1,5 +1,4 @@
-import { ab7RndInit } from "./rnd/rnd_base.js"
-import { ab7ResInit } from "./rnd/res/rnd_res.js"
+import { ab7RndInit, ab7RndResize } from "./rnd/rnd_base.js"
 import {
   ab7RndPrimInit, ab7RndPrimCreate,
   ab7RndCreateVertex
@@ -32,17 +31,13 @@ function ab7SystemInit() {
   window.canvas = document.getElementById("webgl-canvas");
   ab7RndInit();
   window.onresize = (e) => {
-    gl.viewportWidth = canvas.width;
-    gl.viewportHeight = canvas.height;
-    console.log(canvas.width, canvas.height);
+    //ab7RndResize();
   }
-  ab7ResInit();
-  ab7RndPrimInit();
   prim = ab7RndPrimCreate(gl.TRIANGLES,
     [].concat(
       ab7RndCreateVertex([0, 1, 0], [0, 0], [0, 0, 0], [0.96, 0.95, 0.41, 1]),
-      ab7RndCreateVertex([-1, 0, 0], [0, 0], [0, 0, 0], [0.36, 0.70, 0.44, 1]),
-      ab7RndCreateVertex([0, 0, -1], [0, 0], [0, 0, 0], [0.78, 0.98, 0.84, 1])),
+      ab7RndCreateVertex([1, 0, 0], [0, 0], [0, 0, 0], [0.36, 0.70, 0.44, 1]),
+      ab7RndCreateVertex([0, 0, 1], [0, 0], [0, 0, 0], [0.78, 0.98, 0.84, 1])),
     []);
   axis = ab7RndPrimCreate(gl.LINES,
     [].concat(

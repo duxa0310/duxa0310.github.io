@@ -1,4 +1,5 @@
 import * as mth from "../math/math.js"
+import { ab7ResInit } from "./res/rnd_res.js"
 
 export function ab7RndResize() {
   let rx, ry;
@@ -22,11 +23,15 @@ export function ab7RndResize() {
 export function ab7RndInit() {
   window.gl = canvas.getContext("webgl2", { antialias: false });
 
+  gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
   gl.projSize = 0.1;
   gl.projDist = gl.projSize;
   gl.farClip = 1847;
 
-  gl.camLoc = mth.vec3Set1(4.7);
+  ab7ResInit();
+
+  gl.camLoc = mth.vec3Set1(5);
   gl.camAt = mth.vec3Set1(0);
   gl.camUp = mth.vec3Set(0, 1, 0);
 

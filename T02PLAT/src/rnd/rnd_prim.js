@@ -73,7 +73,7 @@ class Primitive {
       new Float32Array(worldmatrix[0].concat(worldmatrix[1]).concat(worldmatrix[2]).concat(worldmatrix[3])));
 
     gl.matrWVP = mth.matrMulMatr(worldmatrix, gl.matrVP);
-    gl.uniformMatrix4fv(gl.getUniformLocation(shd.program, "matrWVP"), true,
+    gl.uniformMatrix4fv(gl.getUniformLocation(shd.program, "matrWVP"), false,
       new Float32Array(gl.matrWVP[0].concat(gl.matrWVP[1]).concat(gl.matrWVP[2]).concat(gl.matrWVP[3])));
 
     gl.bindVertexArray(this.vA);

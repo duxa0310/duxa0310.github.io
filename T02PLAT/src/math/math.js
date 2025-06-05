@@ -93,6 +93,13 @@ export function matrView(loc, at, up1) {
     -vec3DotVec3(loc, right), -vec3DotVec3(loc, up), vec3DotVec3(loc, dir), 1);
 }
 
+export function matrOrtho(l, r, b, t, n, f) {
+  return matrSet(2 / (r - l), 0, 0, 0,
+    0, 2 / (t - b), 0, 0,
+    0, 0, -2 / (f - n), 0,
+    -(r + l) / (r - l), -(t + b) / (t - b), -(f + n) / (f - n), 1);
+}
+
 export function matrFrustum(l, r, b, t, n, f) {
   return matrSet(2 * n / (r - l), 0, 0, 0,
     0, 2 * n / (t - b), 0, 0,
