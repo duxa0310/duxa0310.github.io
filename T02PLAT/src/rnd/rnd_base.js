@@ -44,6 +44,7 @@ export function ab7RndInit() {
   window.gl = canvas.getContext("webgl2", { antialias: false });
 
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+  gl.enable(gl.DEPTH_TEST);
 
   gl.projSize = 0.1;
   gl.projDist = gl.projSize;

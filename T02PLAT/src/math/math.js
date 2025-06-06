@@ -1,3 +1,8 @@
+/* Constants */
+
+export const phi = (Math.sqrt(5) + 1) / 2;
+export const phi_inv = (Math.sqrt(5) - 1) / 2;
+
 /* Angles */
 
 export function radiansToDegrees(a) {

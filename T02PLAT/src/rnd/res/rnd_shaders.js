@@ -10,30 +10,34 @@ function ab7RndShdLoadTextFromFile(filePath) {
             out vec3 DrawNormal;
             out vec4 DrawColor;
 
-            uniform mat4 matrWVP;
-            uniform mat4 matrW;
+            uniform mat4 MatrWVP;
+            uniform mat4 MatrW;
 
             void main( void ) 
             {
-              gl_Position = matrWVP *  vec4(InPosition, 1);
+              gl_Position = MatrWVP * vec4(InPosition, 1);
+              mat4 MatrWInv = inverse(transpose(MatrW));
 
-              DrawPos = (matrW * vec4(InPosition, 1)).xyz;
+              DrawPos = (MatrW * vec4(InPosition, 1.0)).xyz;
               DrawTexCoord = InTexCoord;
-              DrawNormal = /* mat3(matrWInv) * */ InNormal;
+              DrawNormal = mat3(MatrWInv) * InNormal;
               DrawColor = vec4(InColor);
             }`;
   }
   else if (filePath == "bin/shaders/default/frag.glsl") {
     return `layout(location = 0) out vec4 OutColor;
-
             in vec3 DrawPos;
             in vec2 DrawTexCoord;
             in vec3 DrawNormal;
             in vec4 DrawColor;
 
+            uniform vec3 CamDir;
+
             void main()
             {
-              OutColor = DrawColor;
+              float nl = max(0.30, dot(normalize(DrawNormal), -CamDir));
+
+              OutColor = vec4(DrawColor.xyz * nl, DrawColor.w);
             }`;
   }
   /*

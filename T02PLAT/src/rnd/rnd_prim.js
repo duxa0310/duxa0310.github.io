@@ -5,6 +5,14 @@ export function ab7RndCreateVertex(p, t, n, c) {
   return p.concat(t, n, c);
 }
 
+export function ab7RndPentagonFromIndicesCCW(indices) {
+  return [].concat(
+    [indices[0], indices[1], indices[2]],
+    [indices[2], indices[0], indices[3]],
+    [indices[3], indices[4], indices[0]]
+  );
+}
+
 /* vec3 Pos;
  * vec2 TexCoord;
  * vec3 Normal;
@@ -16,7 +24,7 @@ export function ab7RndPrimCreate(type, vertices, indices) {
   return new Primitive(type, vertices, indices);
 }
 
-class Primitive {
+export class Primitive {
   /* ATTRIBUTES:
    *   - primitive type:
    *       let type;
@@ -69,11 +77,13 @@ class Primitive {
     let shd = ab7RndShdGetDef();
     gl.useProgram(shd.program);
 
-    gl.uniformMatrix4fv(gl.getUniformLocation(shd.program, "matrW"), true,
+    gl.uniform3fv(gl.getUniformLocation(shd.program, "CamDir"), new Float32Array(gl.camDir), 0, 0);
+
+    gl.uniformMatrix4fv(gl.getUniformLocation(shd.program, "MatrW"), false,
       new Float32Array(worldmatrix[0].concat(worldmatrix[1]).concat(worldmatrix[2]).concat(worldmatrix[3])));
 
     gl.matrWVP = mth.matrMulMatr(worldmatrix, gl.matrVP);
-    gl.uniformMatrix4fv(gl.getUniformLocation(shd.program, "matrWVP"), false,
+    gl.uniformMatrix4fv(gl.getUniformLocation(shd.program, "MatrWVP"), false,
       new Float32Array(gl.matrWVP[0].concat(gl.matrWVP[1]).concat(gl.matrWVP[2]).concat(gl.matrWVP[3])));
 
     gl.bindVertexArray(this.vA);
@@ -83,7 +93,7 @@ class Primitive {
     }
     else {
       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.iBuf);
-      gl.drawElements(this.type, this.numOfElements, gl.UNSIGNED_BYTE, 0);
+      gl.drawElements(this.type, this.numOfElements, gl.UNSIGNED_INT, 0);
     }
   }
 }
