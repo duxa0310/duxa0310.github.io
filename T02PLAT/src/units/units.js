@@ -13,9 +13,9 @@ export function ab7UnitAdd(u) {
   unitList.push(u);
 }
 
-export function ab7UnitsInit() {
+export async function ab7UnitsInit() {
   for (let i = 0; i < unitList.length; i++) {
-    unitList[i].init();
+    await unitList[i].init();
   }
 }
 

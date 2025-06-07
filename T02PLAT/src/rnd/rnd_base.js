@@ -40,7 +40,14 @@ export function ab7RndProjSet() {
   gl.viewportHeight = gl.frameH;
 }
 
-export function ab7RndInit() {
+export function ab7RndStart() {
+  gl.clearColor(0.30, 0.47, 0.8, 1);
+  gl.viewport(0, 0, 1920, 1080);
+  gl.clear(gl.COLOR_BUFFER_BIT);
+}
+
+export async function ab7RndInit() {
+  outSys("Render system initializing");
   window.gl = canvas.getContext("webgl2", { antialias: false });
 
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -50,10 +57,8 @@ export function ab7RndInit() {
   gl.projDist = gl.projSize;
   gl.farClip = 1847;
 
-  ab7ResInit();
+  await ab7ResInit();
 
   ab7RndCamSet(mth.vec3Set1(8), mth.vec3Set1(0), mth.vec3Set(0, 1, 0));
   ab7RndProjSet();
-
-  outSys("Render system initialized");
 }

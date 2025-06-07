@@ -80,6 +80,9 @@ export class Primitive {
     this.mtl.apply();
 
     gl.uniform3fv(gl.getUniformLocation(this.mtl.shd.program, "CamDir"), new Float32Array(gl.camDir), 0, 0);
+    gl.uniform3fv(gl.getUniformLocation(this.mtl.shd.program, "CamLoc"), new Float32Array(gl.camLoc), 0, 0);
+
+    gl.uniform3fv(gl.getUniformLocation(this.mtl.shd.program, "LightDir"), new Float32Array(gl.lightDir), 0, 0);
 
     gl.uniformMatrix4fv(gl.getUniformLocation(this.mtl.shd.program, "MatrW"), false,
       new Float32Array(worldmatrix[0].concat(worldmatrix[1]).concat(worldmatrix[2]).concat(worldmatrix[3])));

@@ -1,5 +1,5 @@
 import * as mth from "../../math/math.js"
-import { ab7RndShdGetDef } from "./rnd_shaders.js";
+import { ab7RndShdGetByName, ab7RndShdGetDef } from "./rnd_shaders.js";
 
 let ab7RndMaterials = [];
 
@@ -48,7 +48,7 @@ export function ab7RndMtlGetDef() {
 export function ab7RndMtlGetByName(mtlName) {
   for (let i = 1; i < ab7RndMaterials.length; i++) {
     if (ab7RndMaterials[i].name == mtlName)
-      return ab7RndMaterials[i].name;
+      return ab7RndMaterials[i];
   }
   return ab7RndMtlGetDef();
 }
@@ -56,6 +56,9 @@ export function ab7RndMtlGetByName(mtlName) {
 export function ab7RndMtlInit() {
   outSys("Materials initializing");
   new Material("default",
-    mth.vec3Set1(0.1), mth.vec3Set1(0.9), mth.vec3Set1(0.3), 30, 1.0,
+    mth.vec3Set(0.8, 0.47, 0.3), mth.vec3Set1(0.5), mth.vec3Set1(0.3), 30, 1.0,
     ab7RndShdGetDef());
+  new Material("axis-material",
+    mth.vec3Set1(0.1), mth.vec3Set1(0.9), mth.vec3Set1(0.3), 30, 1.0,
+    ab7RndShdGetByName("axis"));
 }

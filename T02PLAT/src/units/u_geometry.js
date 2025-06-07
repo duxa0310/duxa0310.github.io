@@ -36,6 +36,19 @@ export class UnitGeometry extends Unit {
       [].concat(
         [0, 2, 3, 3, 0, 1], [1, 5, 7, 7, 3, 1], [1, 5, 4, 4, 1, 0], [0, 4, 6, 6, 0, 2], [2, 3, 6, 6, 3, 7], [7, 6, 5, 5, 4, 6])
     );
+    this.hexahedronWireframe = ab7RndPrimCreate(gl.LINES_STRIP, ab7RndMtlGetDef(),
+      [].concat(
+        ab7RndCreateVertex([-1, -1, -1], [0, 0], [-1, -1, -1], [1, 0, 0, 1]),
+        ab7RndCreateVertex([-1, -1, 1], [0, 0], [-1, -1, 1], [1, 0.25, 0, 1]),
+        ab7RndCreateVertex([-1, 1, -1], [0, 0], [-1, 1, -1], [1, 0.5, 0, 1]),
+        ab7RndCreateVertex([-1, 1, 1], [0, 0], [-1, 1, 1], [1, 0.75, 0, 1]),
+        ab7RndCreateVertex([1, -1, -1], [0, 0], [1, -1, -1], [0.75, 1, 0, 1]),
+        ab7RndCreateVertex([1, -1, 1], [0, 0], [1, -1, 1], [0.5, 1, 0, 1]),
+        ab7RndCreateVertex([1, 1, -1], [0, 0], [1, 1, -1], [0.25, 1, 0, 1]),
+        ab7RndCreateVertex([1, 1, 1], [0, 0], [1, 1, 1], [0, 1, 0, 1])),
+      [].concat(
+        [0, 2, 3, 3, 0, 1], [1, 5, 7, 7, 3, 1], [1, 5, 4, 4, 1, 0], [0, 4, 6, 6, 0, 2], [2, 3, 6, 6, 3, 7], [7, 6, 5, 5, 4, 6])
+    );
     this.octahedron = ab7RndPrimCreate(gl.TRIANGLES, ab7RndMtlGetDef(),
       [].concat(
         ab7RndCreateVertex([0, 1, 0], [0, 0], [0, 1, 0], [1, 0, 0, 1]),

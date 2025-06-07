@@ -1,64 +1,12 @@
-function ab7RndShdLoadTextFromFile(filePath) {
-  if (filePath == "bin/shaders/default/vert.glsl") {
-    return `layout(location = 0) in vec3 InPosition;
-            layout(location = 1) in vec2 InTexCoord;
-            layout(location = 2) in vec3 InNormal;
-            layout(location = 3) in vec4 InColor;
-
-            out vec3 DrawPos;
-            out vec2 DrawTexCoord;
-            out vec3 DrawNormal;
-            out vec4 DrawColor;
-
-            uniform mat4 MatrWVP;
-            uniform mat4 MatrW;
-
-            void main( void ) 
-            {
-              gl_Position = MatrWVP * vec4(InPosition, 1);
-              mat4 MatrWInv = inverse(transpose(MatrW));
-
-              DrawPos = (MatrW * vec4(InPosition, 1.0)).xyz;
-              DrawTexCoord = InTexCoord;
-              DrawNormal = mat3(MatrWInv) * InNormal;
-              DrawColor = vec4(InColor);
-            }`;
-  }
-  else if (filePath == "bin/shaders/default/frag.glsl") {
-    return `layout(location = 0) out vec4 OutColor;
-            in vec3 DrawPos;
-            in vec2 DrawTexCoord;
-            in vec3 DrawNormal;
-            in vec4 DrawColor;
-
-            uniform vec3 CamDir;
-            
-            uniform vec3 Ka;
-            uniform vec4 KdTrans;
-            uniform vec4 KsPh;
-
-            void main()
-            {
-              float nl = max(0.30, dot(normalize(DrawNormal), -CamDir));
-
-              OutColor = vec4(DrawColor.xyz * nl, DrawColor.w);
-            }`;
-  }
-  /*
-  const response = await fetch(filePath);
-    
-  if (!(response).ok)
-  {
-    alert("Cannot read shader file: " + filePath);
-  }
-
-  let sourceText = await response.text().then((text) => text);
-
+async function ab7RndShdLoadTextFromFile(filePath) {
+  const sourceText = fetch(filePath)
+    .then((response) => response.text())
+    .then((text) => text)
+    .catch((err) => console.err(err));
   return sourceText;
-  */
 }
 
-function ab7RndShdCreate(shdFileNamePrefix) {
+async function ab7RndShdCreate(shdFileNamePrefix) {
   let program = gl.createProgram();
   const shdTypes =
     [
@@ -68,7 +16,7 @@ function ab7RndShdCreate(shdFileNamePrefix) {
 
   for (let i = 0; i < shdTypes.length; i++) {
     let shdPath = "bin/shaders/" + shdFileNamePrefix + "/" + shdTypes[i][0] + ".glsl";
-    let shdString = ab7RndShdLoadTextFromFile(shdPath);
+    let shdString = await ab7RndShdLoadTextFromFile(shdPath);
     shdString = shdTypes[i][2] + shdString;
 
     const shader = gl.createShader(shdTypes[i][1]);
@@ -77,8 +25,7 @@ function ab7RndShdCreate(shdFileNamePrefix) {
 
     if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
       alert(gl.getShaderInfoLog(shader));
-    }
-    else {
+    } else {
       outText("Loaded shader: " + shdPath);
     }
     gl.attachShader(program, shader);
@@ -105,7 +52,10 @@ class Shader {
 
   constructor(shdFileNamePrefix) {
     this.name = shdFileNamePrefix;
-    this.program = ab7RndShdCreate(shdFileNamePrefix);
+  }
+
+  async init() {
+    this.program = await ab7RndShdCreate(this.name);
     ab7RndShaders.push(this);
   }
 
@@ -115,9 +65,18 @@ export function ab7RndShdGetDef() {
   return ab7RndShaders[0];
 }
 
-export function ab7RndShdInit() {
+export function ab7RndShdGetByName(name) {
+  for (let i = 1; i < ab7RndShaders.length; i++) {
+    if (ab7RndShaders[i].name == name)
+      return ab7RndShaders[i];
+  }
+  return ab7RndShdGetDef();
+}
+
+export async function ab7RndShdInit() {
   outSys("Shaders initializing");
-  new Shader("default");
+  await new Shader("default").init();
+  await new Shader("axis").init();
 }
 
 export function ab7RndShdClose() {
