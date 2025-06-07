@@ -1,4 +1,4 @@
-import { ab7RndShdGetDef } from "./res/rnd_shaders.js";
+import { Material } from "./res/rnd_materials.js";
 import * as mth from "../math/math.js"
 
 export function ab7RndCreateVertex(p, t, n, c) {
@@ -20,8 +20,8 @@ export function ab7RndPentagonFromIndicesCCW(indices) {
  */
 const vertexSizeBytes = 48;
 
-export function ab7RndPrimCreate(type, vertices, indices) {
-  return new Primitive(type, vertices, indices);
+export function ab7RndPrimCreate(type, mtl, vertices, indices) {
+  return new Primitive(type, mtl, vertices, indices);
 }
 
 export class Primitive {
@@ -36,10 +36,13 @@ export class Primitive {
    *       let iBuf;
    *   - number of elements:
    *       len numOfElements;
+   *   - material:
+   *       len mtl;
    */
 
-  constructor(type, vertices, indices) {
+  constructor(type, mtl, vertices, indices) {
     this.type = type;
+    this.mtl = mtl;
     /* Vertices data */
     if (vertices.length > 0) {
       this.vBuf = gl.createBuffer();
@@ -70,20 +73,19 @@ export class Primitive {
     else {
       this.numOfElements = vertices.length;
     }
-    outText("Created primitive: " + new String(4 * vertices.length / vertexSizeBytes) + " vertices, " + new String(indices.length) + " indices");
+    outText("Created primitive: " + new String(4 * vertices.length / vertexSizeBytes) + " vertices");
   }
 
   draw(worldmatrix) {
-    let shd = ab7RndShdGetDef();
-    gl.useProgram(shd.program);
+    this.mtl.apply();
 
-    gl.uniform3fv(gl.getUniformLocation(shd.program, "CamDir"), new Float32Array(gl.camDir), 0, 0);
+    gl.uniform3fv(gl.getUniformLocation(this.mtl.shd.program, "CamDir"), new Float32Array(gl.camDir), 0, 0);
 
-    gl.uniformMatrix4fv(gl.getUniformLocation(shd.program, "MatrW"), false,
+    gl.uniformMatrix4fv(gl.getUniformLocation(this.mtl.shd.program, "MatrW"), false,
       new Float32Array(worldmatrix[0].concat(worldmatrix[1]).concat(worldmatrix[2]).concat(worldmatrix[3])));
 
     gl.matrWVP = mth.matrMulMatr(worldmatrix, gl.matrVP);
-    gl.uniformMatrix4fv(gl.getUniformLocation(shd.program, "MatrWVP"), false,
+    gl.uniformMatrix4fv(gl.getUniformLocation(this.mtl.shd.program, "MatrWVP"), false,
       new Float32Array(gl.matrWVP[0].concat(gl.matrWVP[1]).concat(gl.matrWVP[2]).concat(gl.matrWVP[3])));
 
     gl.bindVertexArray(this.vA);
@@ -99,5 +101,5 @@ export class Primitive {
 }
 
 export function ab7RndPrimInit() {
-  outSys("Primitives initialized");
+  outSys("Primitives initializing");
 }

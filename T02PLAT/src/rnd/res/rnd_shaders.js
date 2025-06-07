@@ -32,6 +32,10 @@ function ab7RndShdLoadTextFromFile(filePath) {
             in vec4 DrawColor;
 
             uniform vec3 CamDir;
+            
+            uniform vec3 Ka;
+            uniform vec4 KdTrans;
+            uniform vec4 KsPh;
 
             void main()
             {
@@ -112,8 +116,8 @@ export function ab7RndShdGetDef() {
 }
 
 export function ab7RndShdInit() {
+  outSys("Shaders initializing");
   new Shader("default");
-  outSys("Shaders initialized");
 }
 
 export function ab7RndShdClose() {
