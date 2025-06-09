@@ -27,6 +27,7 @@ export class UnitAxis extends Unit {
   response() { }
 
   render() {
-    this.prim.draw(mth.matrIdentity());
+    if (ab7.showAxis)
+      this.prim.draw(mth.matrIdentity());
   }
 }

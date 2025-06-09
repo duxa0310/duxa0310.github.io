@@ -29,6 +29,10 @@ export class Material {
     outText("Created material: " + name);
   }
 
+  async addTex(id, url) {
+
+  }
+
   apply() {
     gl.useProgram(this.shd.program);
 
@@ -53,10 +57,10 @@ export function ab7RndMtlGetByName(mtlName) {
   return ab7RndMtlGetDef();
 }
 
-export function ab7RndMtlInit() {
+export async function ab7RndMtlInit() {
   outSys("Materials initializing");
   new Material("default",
-    mth.vec3Set(0.8, 0.47, 0.3), mth.vec3Set1(0.5), mth.vec3Set1(0.3), 30, 1.0,
+    mth.vec3Set1(0.7), mth.vec3Set1(0.8), mth.vec3Set1(0.3), 30, 1.0,
     ab7RndShdGetDef());
   new Material("axis-material",
     mth.vec3Set1(0.1), mth.vec3Set1(0.9), mth.vec3Set1(0.3), 30, 1.0,

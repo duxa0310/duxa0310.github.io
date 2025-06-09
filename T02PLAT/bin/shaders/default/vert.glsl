@@ -18,6 +18,6 @@ void main( void )
 
   DrawPos = (MatrW * vec4(InPosition, 1.0)).xyz;
   DrawTexCoord = InTexCoord;
-  DrawNormal = mat3(MatrWInv) * InNormal;
+  DrawNormal = mat3(MatrWInv) * normalize(InNormal);
   DrawColor = vec4(InColor);
 }

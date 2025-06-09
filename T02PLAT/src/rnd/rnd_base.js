@@ -2,42 +2,41 @@ import * as mth from "../math/math.js"
 import { ab7ResInit } from "./res/rnd_res.js"
 
 export function ab7RndCamSet(loc, at, up) {
-  gl.camLoc = loc;
-  gl.camAt = at;
-  gl.matrView = mth.matrView(loc, at, up);
-  gl.camRight = mth.vec3Set(
-    gl.matrView[0][0],
-    gl.matrView[1][0],
-    gl.matrView[2][0]
+  ab7.camLoc = loc;
+  ab7.camAt = at;
+  ab7.matrView = mth.matrView(loc, at, up);
+  ab7.camRight = mth.vec3Set(
+    ab7.matrView[0][0],
+    ab7.matrView[1][0],
+    ab7.matrView[2][0]
   );
-  gl.camUp = mth.vec3Set(
-    gl.matrView[0][1],
-    gl.matrView[1][1],
-    gl.matrView[2][1]);
-  gl.camDir = mth.vec3Set(
-    -gl.matrView[0][2],
-    -gl.matrView[1][2],
-    -gl.matrView[2][2]);
-  //gl.matrVP = mth.matrMulMatr(gl.matrView, gl.matrProj);
+  ab7.camUp = mth.vec3Set(
+    ab7.matrView[0][1],
+    ab7.matrView[1][1],
+    ab7.matrView[2][1]);
+  ab7.camDir = mth.vec3Set(
+    -ab7.matrView[0][2],
+    -ab7.matrView[1][2],
+    -ab7.matrView[2][2]);
 }
 
 export function ab7RndProjSet() {
   let rx, ry;
-  rx = ry = gl.projSize;
+  rx = ry = ab7.projSize;
 
-  gl.frameW = document.documentElement.clientWidth;
-  gl.frameH = document.documentElement.clientHeight;
+  ab7.frameW = document.documentElement.clientWidth;
+  ab7.frameH = document.documentElement.clientHeight;
 
-  if (gl.frameW >= gl.frameH) {
-    rx *= gl.frameW / gl.frameH;
+  if (ab7.frameW >= ab7.frameH) {
+    rx *= ab7.frameW / ab7.frameH;
   }
   else {
-    ry *= gl.frameH / gl.frameW;
+    ry *= ab7.frameH / ab7.frameW;
   }
-  gl.matrProj = mth.matrFrustum(-rx / 2, rx / 2, -ry / 2, ry / 2, gl.projDist, gl.farClip);
-  gl.matrVP = mth.matrMulMatr(gl.matrView, gl.matrProj);
-  gl.viewportWidth = gl.frameW;
-  gl.viewportHeight = gl.frameH;
+  ab7.matrProj = mth.matrFrustum(-rx / 2, rx / 2, -ry / 2, ry / 2, ab7.projDist, ab7.farClip);
+  ab7.matrVP = mth.matrMulMatr(ab7.matrView, ab7.matrProj);
+  gl.viewportWidth = ab7.frameW;
+  gl.viewportHeight = ab7.frameH;
 }
 
 export function ab7RndStart() {
@@ -53,12 +52,12 @@ export async function ab7RndInit() {
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
   gl.enable(gl.DEPTH_TEST);
 
-  gl.projSize = 0.1;
-  gl.projDist = gl.projSize;
-  gl.farClip = 1847;
+  ab7.projSize = 0.1;
+  ab7.projDist = ab7.projSize;
+  ab7.farClip = 1847;
 
   await ab7ResInit();
 
-  ab7RndCamSet(mth.vec3Set1(8), mth.vec3Set1(0), mth.vec3Set(0, 1, 0));
+  ab7RndCamSet(mth.vec3Set1(18), mth.vec3Set1(0), mth.vec3Set(0, 1, 0));
   ab7RndProjSet();
 }

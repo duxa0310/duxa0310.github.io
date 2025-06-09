@@ -1,8 +1,42 @@
-import { Material } from "./res/rnd_materials.js";
 import * as mth from "../math/math.js"
+
+export function ab7RndPrimAutoNormals(vertices, indices) {
+  for (let i = 0; i < vertices.length; i++) {
+    vertices[i][2] = mth.vec3Set1(0);
+  }
+  for (let i = 0; i < indices.length; i += 3) {
+    const n0 = indices[i], n1 = indices[i + 1], n2 = indices[i + 2];
+    const p0 = vertices[n0][0], p1 = vertices[n1][0], p2 = vertices[n2][0];
+    const n = mth.vec3Normalize(
+      mth.vec3CrossVec3(mth.vec3SubVec3(p1, p0), mth.vec3SubVec3(p2, p0))
+    );
+    vertices[n0][2] = mth.vec3AddVec3(vertices[n0][2], n);
+    vertices[n1][2] = mth.vec3AddVec3(vertices[n1][2], n);
+    vertices[n2][2] = mth.vec3AddVec3(vertices[n2][2], n);
+  }
+  for (let i = 0; i < vertices.length; i++) {
+    vertices[i][2] = mth.vec3Normalize(vertices[i][2]);
+  }
+}
+
+export function ab7RndVerticesFromIndices(vertices, indices) {
+  const vertexList = [];
+  for (let i = 0; i < indices.length; i++) {
+    vertexList.push(structuredClone(vertices[indices[i]]));
+  }
+  return vertexList;
+}
 
 export function ab7RndCreateVertex(p, t, n, c) {
   return p.concat(t, n, c);
+}
+
+export function ab7RndFloatListFromVertexList(vertices) {
+  let list = [];
+  for (let i = 0; i < vertices.length; i++) {
+    list = list.concat(ab7RndCreateVertex(vertices[i][0], vertices[i][1], vertices[i][2], vertices[i][3]));
+  }
+  return list;
 }
 
 export function ab7RndPentagonFromIndicesCCW(indices) {
@@ -22,6 +56,13 @@ const vertexSizeBytes = 48;
 
 export function ab7RndPrimCreate(type, mtl, vertices, indices) {
   return new Primitive(type, mtl, vertices, indices);
+}
+
+function ab7HexStringToVec3(str) {
+  const n1 = parseInt(str.substring(1, 3), 16) / 255;
+  const n2 = parseInt(str.substring(3, 5), 16) / 255;
+  const n3 = parseInt(str.substring(5, 7), 16) / 255;
+  return [n1, n2, n3];
 }
 
 export class Primitive {
@@ -76,20 +117,21 @@ export class Primitive {
     outText("Created primitive: " + new String(4 * vertices.length / vertexSizeBytes) + " vertices");
   }
 
-  draw(worldmatrix) {
+  draw(matrWorld) {
     this.mtl.apply();
 
-    gl.uniform3fv(gl.getUniformLocation(this.mtl.shd.program, "CamDir"), new Float32Array(gl.camDir), 0, 0);
-    gl.uniform3fv(gl.getUniformLocation(this.mtl.shd.program, "CamLoc"), new Float32Array(gl.camLoc), 0, 0);
+    gl.uniform3fv(gl.getUniformLocation(this.mtl.shd.program, "CamDir"), new Float32Array(ab7.camDir), 0, 0);
+    gl.uniform3fv(gl.getUniformLocation(this.mtl.shd.program, "CamLoc"), new Float32Array(ab7.camLoc), 0, 0);
 
-    gl.uniform3fv(gl.getUniformLocation(this.mtl.shd.program, "LightDir"), new Float32Array(gl.lightDir), 0, 0);
+    gl.uniform3fv(gl.getUniformLocation(this.mtl.shd.program, "LightDir"), new Float32Array(ab7.lightDir), 0, 0);
+    gl.uniform3fv(gl.getUniformLocation(this.mtl.shd.program, "LightColor"), new Float32Array(ab7HexStringToVec3(ab7.lightColor)), 0, 0);
 
     gl.uniformMatrix4fv(gl.getUniformLocation(this.mtl.shd.program, "MatrW"), false,
-      new Float32Array(worldmatrix[0].concat(worldmatrix[1]).concat(worldmatrix[2]).concat(worldmatrix[3])));
+      new Float32Array(matrWorld[0].concat(matrWorld[1]).concat(matrWorld[2]).concat(matrWorld[3])));
 
-    gl.matrWVP = mth.matrMulMatr(worldmatrix, gl.matrVP);
+    ab7.matrWVP = mth.matrMulMatr(matrWorld, ab7.matrVP);
     gl.uniformMatrix4fv(gl.getUniformLocation(this.mtl.shd.program, "MatrWVP"), false,
-      new Float32Array(gl.matrWVP[0].concat(gl.matrWVP[1]).concat(gl.matrWVP[2]).concat(gl.matrWVP[3])));
+      new Float32Array(ab7.matrWVP[0].concat(ab7.matrWVP[1]).concat(ab7.matrWVP[2]).concat(ab7.matrWVP[3])));
 
     gl.bindVertexArray(this.vA);
 
