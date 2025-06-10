@@ -1,4 +1,6 @@
+import { ab7LoadTextFromFile } from "../index.js";
 import * as mth from "../math/math.js"
+import { ab7RndMtlGetByName, ab7RndMtlGetDef } from "./res/rnd_materials.js";
 
 export function ab7RndPrimAutoNormals(vertices, indices) {
   for (let i = 0; i < vertices.length; i++) {
@@ -147,4 +149,69 @@ export class Primitive {
 
 export function ab7RndPrimInit() {
   outSys("Primitives initializing");
+}
+
+export async function ab7PrimCreateOBJ(url) {
+  const modelSrc = await ab7LoadTextFromFile(url);
+  const lines = modelSrc.split("\n");
+  const isSpace = function (c) { return c == ' ' || c == '\n' || c == '\t'; }
+  let nV = 0, nF = 0, nI = 0;
+  let v = 0, f = 0, vn = 0;
+  /* Count vertices and facets */
+  for (let j = 0; j < lines.length; j++) {
+    const line = lines[j];
+    if (line[0] == 'v' && line[1] == ' ') {
+      nV++;
+    } else if (line[0] == 'f' && line[1] == ' ') {
+      let n = 0;
+      for (let i = 2; i < line.length; i++) {
+        if (!isSpace(line[i]) && isSpace(line[i - 1])) {
+          n++;
+        }
+      }
+      nF += n - 2;
+    }
+  }
+  nI = nF * 3;
+  const vertices = new Array(nV), indices = new Array(nI);
+  /* Set vertices and indices */
+  for (let j = 0; j < lines.length; j++) {
+    const line = lines[j];
+    if (line[0] == 'v' && line[1] == ' ') {
+      if (vertices[v] == undefined) {
+        vertices[v] = [[0, 0, 0], [0, 0], [0, 0, 0], [1, 1, 1, 1]];
+      }
+      vertices[v++][0] = line.substring(2).split(' ').map((c) => parseFloat(c));
+    } else if (line[0] == 'v' && line[1] == 'n' && line[2] == ' ') {
+      if (vertices[vn] == undefined) {
+        vertices[vn] = [[0, 0, 0], [0, 0], [0, 0, 0], [1, 1, 1, 1]];
+      }
+      vertices[vn++][2] = line.substring(3).split(' ').map((c) => parseFloat(c));
+    } else if (line[0] == 'f' && line[1] == ' ') {
+      let n = 0, c = 0, c0 = 0, c1 = 0;
+      for (let i = 2; i < line.length; i++) {
+        if (!isSpace(line[i]) && isSpace(line[i - 1])) {
+          c = parseInt(line.substring(i).split("(\s|\\\\)")[0]);
+          if (c < 0) {
+            c += v;
+          } else {
+            c--;
+          }
+          if (n == 0) {
+            c0 = c;
+          } else if (n == 1) {
+            c1 = c;
+          } else {
+            indices[f++] = c0;
+            indices[f++] = c1;
+            indices[f++] = c;
+            c1 = c;
+          }
+          n++;
+        }
+      }
+    }
+  }
+  return new Primitive(gl.TRIANGLES, ab7RndMtlGetDef(),
+    ab7RndFloatListFromVertexList(vertices), indices);
 }

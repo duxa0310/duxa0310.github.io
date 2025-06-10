@@ -4,7 +4,7 @@ import {
   ab7RndPrimCreate,
   ab7RndCreateVertex
 } from "../rnd/rnd_prim.js";
-import { ab7RndMtlGetByName, ab7RndMtlGetDef } from "../rnd/res/rnd_materials.js";
+import { ab7RndMtlGetByName } from "../rnd/res/rnd_materials.js";
 
 export class UnitAxis extends Unit {
   constructor() {

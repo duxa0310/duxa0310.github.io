@@ -6,6 +6,8 @@ import { UnitAxis } from "./units/u_axis.js";
 import { UnitControl } from "./units/u_ctrl.js";
 import { UnitGeometry } from "./units/u_geometry.js";
 import { UnitTimer } from "./units/u_timer.js";
+import { UnitTriangle } from "./units/u_triangle.js";
+import { UnitCow } from "./units/u_cow.js";
 
 /* Main variables context */
 export const ab7Context = {
@@ -52,6 +54,7 @@ async function ab7Init() {
   ab7UnitAdd(new UnitTimer());
   ab7UnitAdd(new UnitAxis());
   ab7UnitAdd(new UnitGeometry());
+  ab7UnitAdd(new UnitCow());
   await ab7UnitsInit();
 
   outLog("Render start...");

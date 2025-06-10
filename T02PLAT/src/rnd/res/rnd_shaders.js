@@ -1,10 +1,4 @@
-async function ab7RndShdLoadTextFromFile(filePath) {
-  const sourceText = fetch(filePath)
-    .then((response) => response.text())
-    .then((text) => text)
-    .catch((err) => console.err(err));
-  return sourceText;
-}
+import { ab7LoadTextFromFile } from "../..";
 
 async function ab7RndShdCreate(shdFileNamePrefix) {
   let program = gl.createProgram();
@@ -16,7 +10,7 @@ async function ab7RndShdCreate(shdFileNamePrefix) {
 
   for (let i = 0; i < shdTypes.length; i++) {
     let shdPath = "bin/shaders/" + shdFileNamePrefix + "/" + shdTypes[i][0] + ".glsl";
-    let shdString = await ab7RndShdLoadTextFromFile(shdPath);
+    let shdString = await ab7LoadTextFromFile(shdPath);
     shdString = shdTypes[i][2] + shdString;
 
     const shader = gl.createShader(shdTypes[i][1]);
@@ -42,7 +36,7 @@ async function ab7RndShdCreate(shdFileNamePrefix) {
 
 let ab7RndShaders = [];
 
-class Shader {
+export class Shader {
   /* ATTRIBUTES:
    *   - shader prefix name:
    *       let name;
@@ -77,6 +71,7 @@ export async function ab7RndShdInit() {
   outSys("Shaders initializing");
   await new Shader("default").init();
   await new Shader("axis").init();
+  await new Shader("low_poly").init();
 }
 
 export function ab7RndShdClose() {

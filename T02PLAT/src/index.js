@@ -1,5 +1,13 @@
 import { Pane } from "tweakpane";
 
+export async function ab7LoadTextFromFile(filePath) {
+  const sourceText = fetch(filePath)
+    .then((response) => response.text())
+    .then((text) => text)
+    .catch((err) => console.err(err));
+  return sourceText;
+}
+
 export function ab7HtmlInit() {
   const pane = new Pane({
     title: 'INFORMATION & CONTROL PANEL',
@@ -46,6 +54,7 @@ export function ab7HtmlInit() {
       icosahedron: 'icosahedron',
       dodecahedron: 'dodecahedron',
       chaos: 'chaos',
+      cow: 'cow',
     },
   });
 }
