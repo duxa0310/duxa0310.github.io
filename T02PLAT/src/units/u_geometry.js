@@ -158,7 +158,7 @@ export class UnitGeometry extends Unit {
             2 * Math.random() - 1,
             2 * Math.random() - 1,
             2 * Math.random() - 1
-          ), 47)),
+          ), 47 * (Math.random() + 0.5))),
         mth.matrRotate(
           30 * (2 * Math.random() - 1),
           mth.vec3Set(
@@ -177,9 +177,9 @@ export class UnitGeometry extends Unit {
 
   render() {
     const matrRotate = mth.matrMulMatr(mth.matrMulMatr(
-      mth.matrRotateX(18 * ab7.globalTime * (+ab7.rotate)),
-      mth.matrRotateY(30 * ab7.globalTime * (+ab7.rotate)),
-    ), mth.matrRotateZ(47 * ab7.globalTime * (+ab7.rotate)),
+      mth.matrRotateX(18 * ab7.time * (+ab7.rotate)),
+      mth.matrRotateY(30 * ab7.time * (+ab7.rotate)),
+    ), mth.matrRotateZ(47 * ab7.time * (+ab7.rotate)),
     );
     switch (ab7.scene) {
       case 'tetrahedron':

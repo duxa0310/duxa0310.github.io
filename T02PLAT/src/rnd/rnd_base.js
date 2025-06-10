@@ -43,10 +43,14 @@ export function ab7RndStart() {
   gl.clearColor(0.30, 0.47, 0.8, 1);
   gl.viewport(0, 0, 1920, 1080);
   gl.clear(gl.COLOR_BUFFER_BIT);
+
+  ab7.matrView = mth.matrView(ab7.camLoc, ab7.camAt, ab7.camUp);
+  ab7.matrVP = mth.matrMulMatr(ab7.matrView, ab7.matrProj);
 }
 
 export async function ab7RndInit() {
   outSys("Render system initializing");
+  window.canvas = document.getElementById("webgl-canvas");
   window.gl = canvas.getContext("webgl2", { antialias: false });
 
   gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
@@ -55,6 +59,8 @@ export async function ab7RndInit() {
   ab7.projSize = 0.1;
   ab7.projDist = ab7.projSize;
   ab7.farClip = 1847;
+
+  ab7.lightDir = mth.vec3Set(1.8, 0.8, 1.8);
 
   await ab7ResInit();
 
