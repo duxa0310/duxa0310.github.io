@@ -5,4 +5,4 @@ For working examples, visit:
 
 - [x] [Mandelbrot](https://duxa0310.github.io/T01MANDL/)
 - [x] [Platon bodies](https://duxa0310.github.io/T02PLAT/)
-- [x] [Web chat](https://duxa0310.github.io/T03CHAT/)
+- [ ] [Web chat](https://duxa0310.github.io/T03CHAT/)
