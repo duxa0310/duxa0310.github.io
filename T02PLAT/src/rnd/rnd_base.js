@@ -13,19 +13,22 @@ export function ab7RndCamSet(loc, at, up) {
   ab7.camUp = mth.vec3Set(
     ab7.matrView[0][1],
     ab7.matrView[1][1],
-    ab7.matrView[2][1]);
+    ab7.matrView[2][1]
+  );
   ab7.camDir = mth.vec3Set(
     -ab7.matrView[0][2],
     -ab7.matrView[1][2],
-    -ab7.matrView[2][2]);
+    -ab7.matrView[2][2]
+  );
+  //ab7.matrVP = mth.matrMulMatr(ab7.matrView, ab7.matrProj);
 }
 
-export function ab7RndProjSet() {
+export function ab7RndProjSet(w, h) {
   let rx, ry;
   rx = ry = ab7.projSize;
 
-  ab7.frameW = document.documentElement.clientWidth;
-  ab7.frameH = document.documentElement.clientHeight;
+  ab7.frameW = w;
+  ab7.frameH = h;
 
   if (ab7.frameW >= ab7.frameH) {
     rx *= ab7.frameW / ab7.frameH;
@@ -59,11 +62,11 @@ export async function ab7RndInit() {
   ab7.projSize = 0.1;
   ab7.projDist = ab7.projSize;
   ab7.farClip = 1847;
-
   ab7.lightDir = mth.vec3Set(1.8, 0.8, 1.8);
 
   await ab7ResInit();
 
   ab7RndCamSet(mth.vec3Set1(18), mth.vec3Set1(0), mth.vec3Set(0, 1, 0));
-  ab7RndProjSet();
+  ab7RndProjSet(document.documentElement.clientWidth,
+    document.documentElement.clientHeight);
 }

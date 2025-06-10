@@ -13,6 +13,8 @@ export const ab7Context = {
   globalTime: 0, globalDeltaTime: 0,
   time: 0, deltaTime: 0,
   fps: 60.0,
+  mX: 0, mY: 0, mdX: 0, mdY: 0, mdZ: 0,
+  mousePressed: false,
   showAxis: false,
   rotate: true,
   pause: false,
@@ -20,6 +22,7 @@ export const ab7Context = {
   scene: "tetrahedron",
 };
 
+/* Make ab7Init function call on page load */
 window.onload = ab7Init;
 
 async function ab7Init() {
@@ -33,8 +36,13 @@ async function ab7Init() {
 
   const control = new UnitControl();
   document.onkeydown = () => { control.response() }
+  document.onmousedown = (ev) => { ab7.mousePressed = true; }
+  document.onmouseup = (ev) => { ab7.mousePressed = false; }
+  document.onmousemove = (ev) => { control.render(ev) }
+  document.onwheel = (ev) => { control.init(ev) }
   window.onresize = () => {
-    ab7RndProjSet();
+    ab7RndProjSet(document.documentElement.clientWidth,
+      document.documentElement.clientHeight);
   }
 
   outLog("System start...");

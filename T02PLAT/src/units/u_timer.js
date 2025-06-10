@@ -1,4 +1,3 @@
-import * as mth from "../math/math.js"
 import { Unit } from "./units.js";
 
 export class UnitTimer extends Unit {

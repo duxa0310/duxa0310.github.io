@@ -2,7 +2,6 @@ import * as mth from "../math/math.js"
 import { Unit } from "./units.js";
 import {
   ab7RndPrimCreate,
-  ab7RndCreateVertex,
   ab7RndPentagonFromIndicesCCW,
   ab7RndVerticesFromIndices,
   ab7RndPrimAutoNormals,
