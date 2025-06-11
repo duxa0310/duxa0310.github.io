@@ -10,7 +10,7 @@ export class UnitCow extends Unit {
   }
 
   async init() {
-    this.prim = await ab7PrimCreateOBJ("../../bin/models/cow.obj");
+    this.prim = await ab7PrimCreateOBJ("../bin/models/cow.obj");
     this.prim.mtl = ab7RndMtlGetByName("cow-material");
   }
 
