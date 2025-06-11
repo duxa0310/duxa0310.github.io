@@ -38,6 +38,12 @@ app.get("/", (req, res) => {
   });
 });
 
+app.get("/chat", (req, res) => {
+  fs.readFile("chat.html", "utf8").then((contents) => {
+    res.send(contents);
+  });
+});
+
 server.listen(port, () => {
   console.log(`Server started on port ${port}`);
 });

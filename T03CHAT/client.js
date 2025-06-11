@@ -10,10 +10,10 @@ export function openWebSocketCommunication() {
   };
   socket.onmessage = (e) => {
     console.log(`[CLIENT] Message received: ${e.data}`);
-    socket.send("Hello from client again!");
+    setTimeout(() => { socket.send("Hello from client again!"); }, 100);
   };
 }
 
 setTimeout(() => {
   openWebSocketCommunication();
-}, 1000);
+}, 0);
