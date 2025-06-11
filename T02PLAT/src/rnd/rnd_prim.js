@@ -1,6 +1,6 @@
 import { ab7LoadTextFromFile } from "../index.js";
 import * as mth from "../math/math.js"
-import { ab7RndMtlGetByName, ab7RndMtlGetDef } from "./res/rnd_materials.js";
+import { ab7RndMtlGetDef } from "./res/rnd_materials.js";
 
 export function ab7RndPrimAutoNormals(vertices, indices) {
   for (let i = 0; i < vertices.length; i++) {
