@@ -1,7 +1,7 @@
 {
-  "name": "t03chat",
+  "name": "socket_io_rollup",
   "version": "1.0.0",
-  "main": "main.js",
+  "main": "src/server/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -9,10 +9,13 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@rollup/plugin-commonjs": "^28.0.3",
+    "@rollup/plugin-node-resolve": "^16.0.1",
     "cookie-parser": "^1.4.7",
     "express": "^5.1.0",
-    "mongodb": "^6.17.0",
     "morgan": "^1.10.0",
-    "ws": "^8.18.2"
+    "rollup": "^4.43.0",
+    "socket.io": "^4.8.1",
+    "socket.io-client": "^4.8.1"
   }
 }
