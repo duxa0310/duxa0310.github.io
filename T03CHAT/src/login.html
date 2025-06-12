@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>AB7 Webchat Login</title>
+  </head>
+  <body>
+    <div>
+      <h1>Chat Login</h1>
+      <form id = "login-form">
+        <input type = "text" id = "username-input" placeholder = "Username" required />
+        <input type = "password" id = "password-input" placeholder = "Password" required/>
+        <button type = "submit">Login / Register</button>
+      </form>
+      <div id = "error-text"></div>
+    </div>
+    <script>
+      document.getElementById("login-form").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const username = document.getElementById("username-input").value;
+        const password = document.getElementById("password-input").value;
+        const errorPane = document.getElementById("error-text");
+        try {
+          const response = await fetch("/auth", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, password }),
+          });
+          const data = await response.json();
+          if (data.success) {
+            localStorage.setItem("username", username);
+            window.location.href = "/chat";
+          } else { errorPane.textContent = data.error; }
+        } catch (error) {
+            errorPane.textContent = "Connection error";
+        }
+      });
+    </script>
+  </body>
+</html>

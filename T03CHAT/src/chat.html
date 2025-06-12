@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AB7 Webchat Room</title>
+</head>
+<body>
+  <div>
+    <div>
+      <h1>Chat Room</h1>
+      <div>
+        <span id = "account-name"></span>
+        <button onclick = "logout()">Logout</button>
+      </div>
+    </div>
+    <div id = "message-list"></div>
+    <div>
+      <input type = "text" id = "message-input" placeholder = "Message" 
+        onkeypress = "if (event.key == 'Enter') { sendMessage(); }">
+      <button onclick = "sendMessage()">Send</button>
+    </div>
+  </div>
+  <script src = "./socket.io/socket.io.js"></script>
+  <script src = "./client/main.js"></script>
+</body>
+</html>
