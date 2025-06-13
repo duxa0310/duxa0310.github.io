@@ -2,14 +2,16 @@
 <html>
   <head>
     <title>AB7 Webchat Login</title>
+    <link rel = "icon" type = "image/x-icon" href = "./bin/images/favicon.ico">
+    <link rel = "stylesheet" href = "./style.css">
   </head>
   <body>
-    <div>
-      <h1>Chat Login</h1>
+    <div class = "login-box">
+      <h1 id = "login-text">Chat Login</h1>
       <form id = "login-form">
-        <input type = "text" id = "username-input" placeholder = "Username" required />
-        <input type = "password" id = "password-input" placeholder = "Password" required/>
-        <button type = "submit">Login / Register</button>
+        <input class = "form-element" type = "text" id = "username-input" placeholder = "Username" required />
+        <input class = "form-element" type = "password" id = "password-input" placeholder = "Password" required/>
+        <button class = "form-element" type = "submit">Login / Register</button>
       </form>
       <div id = "error-text"></div>
     </div>

@@ -2,18 +2,20 @@
 <html>
 <head>
   <title>AB7 Webchat Room</title>
+  <link rel = "icon" type = "image/x-icon" href = "./bin/images/favicon.ico">
+  <link rel = "stylesheet" href = "./style.css">
 </head>
 <body>
   <div>
-    <div>
-      <h1>Chat Room</h1>
-      <div>
+    <div id = "top-info">
+      <h1 id = "chat-text">Chat Room</h1>
+      <div id = "account-info">
         <span id = "account-name"></span>
         <button onclick = "logout()">Logout</button>
       </div>
     </div>
     <div id = "message-list"></div>
-    <div>
+    <div id = "send-box">
       <input type = "text" id = "message-input" placeholder = "Message" 
         onkeypress = "if (event.key == 'Enter') { sendMessage(); }">
       <button onclick = "sendMessage()">Send</button>

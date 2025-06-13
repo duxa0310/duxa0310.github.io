@@ -7,7 +7,9 @@ function displayMessage(messageData) {
 
     const timestamp = new Date(messageData.time).toLocaleTimeString();
 
-    msgPane.innerHTML = `<strong>${messageData.username}</strong> 
+    msgPane.style = "background-color: white; width: fit-content; padding: 5px; border-radius: 10px; height: fit-content; margin-bottom: 5px;";
+    msgPane.innerHTML =
+        `<strong>${messageData.username}</strong> 
         <span style="color: #777777; font-size: 10px;">${timestamp}</span><br>
         ${messageData.text}`;
 
